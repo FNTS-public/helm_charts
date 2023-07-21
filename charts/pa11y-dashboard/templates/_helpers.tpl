@@ -3,7 +3,7 @@
 Expand the name of the chart.
 */}}
 {{- define "pa11y-dashboard.name" -}}
-{{- default .Chart.Name .Values.global.nameOverride | trunc 63 | trimSuffix "-" }}
+{{- default "pa11y" .Values.global.nameOverride | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{/*

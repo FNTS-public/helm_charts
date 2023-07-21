@@ -1,7 +1,7 @@
 global:
-  nameOverride: pa11y
+  nameOverride:
   fullnameOverride:
-  namespaceOverride: infra
+  namespaceOverride:
   commonLabels: {}
   commonAnnotations: {}
 
