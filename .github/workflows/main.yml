@@ -11,7 +11,7 @@ on:
       - closed
     branches:    
       - 'main'
-
+      - 'master'
 jobs:
   prep:
     runs-on: ubuntu-latest
