@@ -144,8 +144,8 @@ jobs:
         with:
           version: v3.8.1
       - run: |
-          helm repo add bitnami https://charts.bitnami.com/bitnami
-          helm repo add fnts https://github.com/FNTS-public/helm_charts
+          helm repo add bitnami https://charts.bitnami.com/bitnami || true
+          helm repo add fnts https://github.com/FNTS-public/helm_charts || true
           helm repo update
 
       - name: Run chart-releaser
