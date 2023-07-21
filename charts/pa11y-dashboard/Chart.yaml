@@ -1,0 +1,16 @@
+apiVersion: v2
+appVersion: "latest"
+description: A Helm chart for Kubernetes
+name: pa11y-dashboard
+version: 0.0.0
+
+dependencies:
+  - condition: mongodb.enabled
+    name: mongodb
+    repository: oci://registry-1.docker.io/bitnamicharts
+    version: 13.x.x
+  - name: common
+    repository: oci://registry-1.docker.io/bitnamicharts
+    tags:
+    - bitnami-common
+    version: 2.x.x
