@@ -26,7 +26,7 @@ resources:
     cpu: '1'
 port: 4000
 image:
-  repository: ghcr.io/bcarlockfnts/pa11y-dashboard
+  repository: ghcr.io/fnts-public/pa11y-dashboard
   tag: latest
   imagePullPolicy: IfNotPresent
 
