@@ -4,8 +4,6 @@ kind: Service
 metadata:
   name: {{ include "common.names.name" . }}
   namespace: {{ include "common.names.namespace" . | quote }}
-  labels:
-    pa11y: dashboard
 spec:
   type: ClusterIP
   ports:
@@ -16,6 +14,8 @@ spec:
     
   selector:
     pa11y: dashboard
+    app.kubernetes.io/name: pa11y-dashboard
+    app.kubernetes.io/component: dashboard
     {{- range $key, $value := .Values.selectorLabels }}
     {{ $key }}: {{ $value | quote }}
     {{- end }}
