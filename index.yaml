@@ -3,6 +3,25 @@ entries:
   pa11y-dashboard:
   - apiVersion: v2
     appVersion: latest
+    created: "2023-07-26T14:14:00.978680301Z"
+    dependencies:
+    - condition: mongodb.enabled
+      name: mongodb
+      repository: oci://registry-1.docker.io/bitnamicharts
+      version: 13.x.x
+    - name: common
+      repository: oci://registry-1.docker.io/bitnamicharts
+      tags:
+      - bitnami-common
+      version: 2.x.x
+    description: A Helm chart for Kubernetes
+    digest: 93b4312c8ce1c969e153dee8257d8b752f5d012be3fa924e1e281b25a86d048d
+    name: pa11y-dashboard
+    urls:
+    - https://github.com/FNTS-public/helm_charts/releases/download/pa11y-dashboard-0.0.7/pa11y-dashboard-0.0.7.tgz
+    version: 0.0.7
+  - apiVersion: v2
+    appVersion: latest
     created: "2023-07-26T13:55:52.808766829Z"
     dependencies:
     - condition: mongodb.enabled
@@ -115,4 +134,4 @@ entries:
     urls:
     - https://github.com/FNTS-public/helm_charts/releases/download/pa11y-dashboard-0.0.1/pa11y-dashboard-0.0.1.tgz
     version: 0.0.1
-generated: "2023-07-26T13:55:52.809065527Z"
+generated: "2023-07-26T14:14:00.978714301Z"
