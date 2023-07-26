@@ -63,7 +63,7 @@ jobs:
               fi
               done
           done
-          echo "::set-output name=matrix::$(printf "%s" "$var" | jq -Rrsc 'split("\\n") | unique')"
+          echo "matrix=$(printf "%s" "$var" | jq -Rrsc 'split("\\n") | unique')" >> $GITHUB_OUTPUT
 
         ## Make sure the heredoc is indented with tabs. NOT SPACES.
       - name: get all charts & create package.json if it does not exist
@@ -75,7 +75,7 @@ jobs:
             package="${charthome}/package.json"
             if [ ! -f "${charthome}/package.json" ] || [ ! -s "${charthome}/package.json" ]; then 
             echo "${charthome}/package.json does not exist or is empty"
-            echo "::set-output name=commitpackages::true"
+            echo "commitpackages=true" >> $GITHUB_OUTPUT
             cat <<- EOF > ${charthome}/package.json 
             {
                 "name": "$(basename $charthome)",
