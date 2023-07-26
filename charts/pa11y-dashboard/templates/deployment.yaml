@@ -34,8 +34,11 @@ spec:
           image: {{ list .Values.image.repository .Values.image.tag | join ":" | default "ghcr.io/fnts-public/pa11y-dashboard:latest"}}
           imagePullPolicy: {{ .Values.image.imagePullPolicy }}
           ports:
-            - name: http
-              containerPort: {{ .Values.port | default 3000  }}
+            - name: http-dashboard
+              containerPort: {{ .Values.port | default 80 }}
+              protocol: TCP
+            - name: http-webservice
+              containerPort: {{ .Values.webservicePort | default 3000  }}
               protocol: TCP
           volumeMounts:
             - name: webservice-config
