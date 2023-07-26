@@ -10,7 +10,6 @@ metadata:
 spec:
   selector:
     matchLabels:
-      pa11y: dashboard
       app.kubernetes.io/name: pa11y-dashboard
       app.kubernetes.io/component: dashboard
       {{- range $key, $value := .Values.selectorLabels }}
@@ -22,7 +21,6 @@ spec:
   template:
     metadata:
       labels:
-        pa11y: dashboard
         app.kubernetes.io/name: pa11y-dashboard
         app.kubernetes.io/component: dashboard
         {{- range $key, $value := .Values.selectorLabels }}
