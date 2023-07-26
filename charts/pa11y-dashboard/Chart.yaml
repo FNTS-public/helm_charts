@@ -2,7 +2,7 @@ apiVersion: v2
 appVersion: "latest"
 description: A Helm chart for Kubernetes
 name: pa11y-dashboard
-version: 0.0.5
+version: 0.0.6
 
 dependencies:
   - condition: mongodb.enabled
