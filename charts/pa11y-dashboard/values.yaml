@@ -1,3 +1,5 @@
+selectorLabels: {}
+
 global:
   nameOverride:
   fullnameOverride:
@@ -5,7 +7,6 @@ global:
   commonLabels: {}
   commonAnnotations: {}
 
-selectorLabels: {}
 deployment:
   labels: {}
   annotations: {}
