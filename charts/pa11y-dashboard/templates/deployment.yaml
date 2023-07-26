@@ -31,8 +31,8 @@ spec:
             secretName: {{ default "webservice-config-json" .Values.existingWebserviceConfigSecret  }}
       containers:
         - name: dashboard
-          image: 'ghcr.io/bcarlockfnts/pa11y-dashboard:latest'
-          imagePullPolicy: IfNotPresent
+          image: {{ list .Values.image.repository .Values.image.tag | join ":"}}
+          imagePullPolicy: {{ .Values.image.imagePullPolicy }}
           ports:
             - name: http
               containerPort: {{ .Values.port  }}
