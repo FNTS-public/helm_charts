@@ -1,0 +1,39 @@
+fullnameOverride:
+namespaceOverride: "default"
+targetCloud: "IBM"
+
+config:
+  existingSecret:
+  git:
+    address: "UNCONFIGURED"
+    branch: "UNCONFIGURED"
+    path: "/tmp/git"
+  insecure:
+    brokerPassword:
+    brokerUsername:
+    gitUsername:
+    gitKey:
+    gitPassword:
+
+deployment:
+  autoscaling: 
+    horizontal:
+      enabled: "true"
+      maxReplicas: "5"
+      minReplicas: "1"
+      targetCPUUtilizationPercentage: "90"
+    vertical:
+      enabled: "true"
+      vpaMode: "Initial"
+  replicas: 
+  labels: {}
+  annotations: {}
+
+service:
+  labels: {}
+  annotations: {}
+
+image:
+  repository: "ghcr.io/meshcloud/unipipe-service-broker"
+  tag: "v1.7.6"
+  pullPolicy: "IfNotPresent"

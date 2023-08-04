@@ -1,0 +1,43 @@
+{{- if (.Values.deployment.autoscaling.horizontal.enabled) }}
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+ name: {{ include "helm.fullname" . }}
+ namespace: {{ .Values.namespaceOverride | default "default" }}
+spec:
+ maxReplicas: {{ default "5" .Values.deployment.autoscaling.maxReplicas }}
+ minReplicas: {{ default "1" .Values.deployment.autoscaling.minReplicas }}
+ scaleTargetRef:
+   apiVersion: extensions/v1beta1
+   kind: Deployment
+   name: {{ include "helm.fullname" . }}
+ targetCPUUtilizationPercentage: {{ default "90" .Values.deployment.autoscaling.targetCPUUtilizationPercentage }}
+ {{- end }}
+
+---
+{{- if (.Values.deployment.autoscaling.vertical.enabled) }}
+apiVersion: autoscaling.k8s.io/v1
+kind: VerticalPodAutoscaler
+metadata:
+  name: {{ include "helm.fullname" . }}
+  namespace: {{ .Values.namespaceOverride | default "default" }}
+spec:
+  targetRef:
+    apiVersion: "apps/v1"
+    kind: Deployment
+    name: {{ include "helm.fullname" . }}
+  updatePolicy:
+    updateMode: {{ default "Initial" .Values.deployment.autoscaling.vertical.vpaMode }}
+  resourcePolicy:
+    containerPolicies:
+    - containerName: {{ include "helm.fullname" . }}
+      controlledValues: {{ dig "vpa" "controlledValues" "RequestsOnly" (.Values | merge (dict)) }}
+      minAllowed:
+        cpu: 0m
+        memory: 0Mi
+      maxAllowed:
+        cpu: {{ dig "resources" "limits" "cpu" "1000m" (default .Values.deployment .Values.statefulset) }}
+        memory: {{ dig "resources" "limits" "memory" "1Gi" (default .Values.deployment .Values.statefulset) }}
+    - containerName: istio-proxy
+      mode: "Off"
+{{- end }}

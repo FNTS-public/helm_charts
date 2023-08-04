@@ -1,0 +1,64 @@
+{{- $fullName := include "helm.fullname" . }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ $fullName }}
+  namespace: {{ .Values.namespaceOverride | default "default" }}
+  labels:
+    {{ include "helm.labels.standard" . | indent 4 | trim }}
+    {{- range $key, $value := .Values.deployment.labels }}
+    {{ $key }}: {{ $value | quote }}
+    {{- end }}
+  {{ if .Values.deployment.annotations }}
+  annotations:
+    {{- range $key, $value := .Values.deployment.annotations }}
+    {{ $key }}: {{ $value | quote }}
+    {{- end }}
+  {{- end -}}
+spec:
+  {{- if not .Values.scaling }}
+  replicas: {{ if and (not (kindIs "invalid" .Values.deployment.replicas)) (default "0" .Values.deployment.replicas | toString) }}{{ .Values.deployment.replicas }}{{ else }}{{ 1 }}{{ end }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{ include "helm.labels.selector" . | indent 6 | trim }}
+  template:
+    metadata:
+      annotations:
+        {{- range $key, $value := .Values.podAnnotations }}
+        {{ $key }}: {{ $value | quote }}
+        {{- end }}
+      labels:
+        {{ include "helm.labels.standard" . | indent 8 | trim }}
+        {{- range $key, $value := .Values.podLabels }}
+        {{ $key }}: {{ $value | quote }}
+        {{- end }}
+    spec:
+      {{ include "helm.podSecurityContext " . | indent 6 | trim }}
+      containers:
+        - name: service-broker
+          {{ include "helm.containerSecurityContext " $ | indent 10 | trim }}
+          image: "{{ .Values.image.repository | default "ghcr.io/meshcloud/unipipe-service-broker" }}:{{ .Values.image.tag | default "v1.7.6" }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy | default "IfNotPresent" }}
+          env:
+            - name: GIT_REMOTE
+              value: {{ .Values.config.address | default "UNCONFIGURED" }}
+            - name: GIT_REMOTE_BRANCH
+              value: {{ .Values.config.branch | default "UNCONFIGURED" }}
+            - name: GIT_REMOTE_BRANCH
+              value: {{ .Values.config.path | default "/tmp/git" }}
+
+          envFrom:
+            - secretRef:
+                name: {{ .Values.existingSecret | default $fullName }}
+          volumeMounts:
+            - name: gitpath
+              mountPath: {{ .Values.config.path | default "/tmp/git" }}
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          {{ include "helm.resources" . | indent 10 | trim }}
+      volumes:
+        - name: gitpath
+          emptyDir: {}
