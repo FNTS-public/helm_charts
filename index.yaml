@@ -1,5 +1,16 @@
 apiVersion: v1
 entries:
+  OpenServiceBroker:
+  - apiVersion: v2
+    appVersion: latest
+    created: "2023-08-04T00:06:54.746839748Z"
+    description: Deploy a simple OpenServiceBroker based on unpipe-service-broker
+      (https://github.com/meshcloud/unipipe-service-broker)
+    digest: 8cb51d5db3e0d6d12d12c868c9b3ca4c903ec576d6639efd101061b33a0b0d20
+    name: OpenServiceBroker
+    urls:
+    - https://github.com/FNTS-public/helm_charts/releases/download/OpenServiceBroker-0.0.1/OpenServiceBroker-0.0.1.tgz
+    version: 0.0.1
   pa11y-dashboard:
   - apiVersion: v2
     appVersion: latest
@@ -191,4 +202,4 @@ entries:
     urls:
     - https://github.com/FNTS-public/helm_charts/releases/download/pa11y-dashboard-0.0.1/pa11y-dashboard-0.0.1.tgz
     version: 0.0.1
-generated: "2023-07-26T17:42:04.288180916Z"
+generated: "2023-08-04T00:06:54.746868448Z"
