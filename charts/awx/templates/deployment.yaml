@@ -227,8 +227,8 @@ spec:
         fsGroupChangePolicy: OnRootMismatch
         runAsGroup: 0
         runAsUser: 0
-      serviceAccount: awx
-      serviceAccountName: awx
+      serviceAccount: {{ $fullName }}
+      serviceAccountName: {{ $fullName }}
       terminationGracePeriodSeconds: 30
       volumes:
         - name: awx-app-credentials
