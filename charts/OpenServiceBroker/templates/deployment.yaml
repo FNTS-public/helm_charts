@@ -22,7 +22,7 @@ spec:
   selector:
     matchLabels:
       {{ include "helm.labels.selector" . | indent 6 | trim }}
-      {{ include "helm.labels.standard" . | indent 8 | trim }}
+      {{ include "helm.labels.standard" . | indent 6 | trim }}
   template:
     metadata:
       annotations:
