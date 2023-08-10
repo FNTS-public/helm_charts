@@ -25,6 +25,11 @@ deployment:
     vertical:
       enabled: "true"
       vpaMode: "Initial"
+  security:
+    pod:
+      enabled: false
+    container:
+      enabled: false
   replicas: 
   labels: {}
   annotations: {}
@@ -34,6 +39,6 @@ service:
   annotations: {}
 
 image:
-  repository: "ghcr.io/meshcloud/unipipe-service-broker"
-  tag: "v1.7.6"
+  repository: "ghcr.io/fnts-public/openservicebroker"
+  tag: "latest"
   pullPolicy: "IfNotPresent"

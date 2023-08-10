@@ -32,10 +32,10 @@ spec:
         {{ $key }}: {{ $value | quote }}
         {{- end }}
     spec:
-      {{ include "helm.podSecurityContext " . | indent 6 | trim }}
+      {{ if .Values.deployment.security.pod.enabled -}}{{ include "helm.podSecurityContext " . | indent 6 | trim }}{{ end }}
       containers:
         - name: service-broker
-          {{ include "helm.containerSecurityContext " $ | indent 10 | trim }}
+          {{ if .Values.deployment.security.container.enabled -}}{{ include "helm.containerSecurityContext " $ | indent 10 | trim }}{{ end }}
           image: "{{ .Values.image.repository | default "ghcr.io/fnts-public/openservicebroker" }}:{{ .Values.image.tag | default "latest" }}"
           imagePullPolicy: {{ .Values.image.pullPolicy | default "IfNotPresent" }}
           env:
