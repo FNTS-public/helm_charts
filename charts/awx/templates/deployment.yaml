@@ -268,7 +268,7 @@ spec:
             items:
               - key: redis_conf
                 path: redis.conf
-            name: awx-awx-configmap
+            name: {{ .Values.awx.receptorConfig.existingConfigMap | default "awx-awx-configmap" }}
           name: awx-redis-config
         - emptyDir: {}
           name: awx-redis-socket
@@ -287,7 +287,7 @@ spec:
             items:
               - key: receptor_conf
                 path: receptor.conf
-            name: {{ .Values.awx.receptorConfig.existingConfigMap | default "awx-receptor-config" }}
+            name: {{ .Values.awx.receptorConfig.existingConfigMap | default "awx-awx-configmap" }}
           name: awx-receptor-config
         - emptyDir: {}
           name: awx-projects
