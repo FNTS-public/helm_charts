@@ -6,15 +6,13 @@ metadata:
   namespace: {{ .Values.namespaceOverride | default "default" }}
   labels:
     {{ include "helm.labels.standard" . | indent 4 | trim }}
-    {{- range $key, $value := .Values.deployment.labels }}
-    {{ $key }}: {{ $value | quote }}
-    {{- end }}
-  {{ if .Values.deployment.annotations }}
+    {{ include "helm.labels.custom" . | indent 4 | trim }}
+  {{- if .Values.deployment.annotations }}
   annotations:
     {{- range $key, $value := .Values.deployment.annotations }}
     {{ $key }}: {{ $value | quote }}
     {{- end }}
-  {{- end -}}
+  {{- end }}
 spec:
   {{- if not .Values.scaling }}
   replicas: {{ if and (not (kindIs "invalid" .Values.deployment.replicas)) (default "0" .Values.deployment.replicas | toString) }}{{ .Values.deployment.replicas }}{{ else }}{{ 1 }}{{ end }}
@@ -42,11 +40,11 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy | default "IfNotPresent" }}
           env:
             - name: GIT_REMOTE
-              value: {{ .Values.config.address | default "UNCONFIGURED" }}
+              value: {{ .Values.config.git.address | default "UNCONFIGURED" }}
             - name: GIT_REMOTE_BRANCH
-              value: {{ .Values.config.branch | default "UNCONFIGURED" }}
+              value: {{ .Values.config.git.branch | default "UNCONFIGURED" }}
             - name: GIT_REMOTE_BRANCH
-              value: {{ .Values.config.path | default "/tmp/git" }}
+              value: {{ .Values.config.git.path | default "/tmp/git" }}
 
           envFrom:
             - secretRef:
@@ -54,11 +52,15 @@ spec:
           volumeMounts:
             - name: gitpath
               mountPath: {{ .Values.config.path | default "/tmp/git" }}
+            - name: tmp
+              mountPath: /tmp
           ports:
             - name: http
-              containerPort: 8080
+              containerPort: 80
               protocol: TCP
           {{ include "helm.resources" . | indent 10 | trim }}
       volumes:
         - name: gitpath
+          emptyDir: {}
+        - name: tmp
           emptyDir: {}

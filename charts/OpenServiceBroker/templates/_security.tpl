@@ -7,11 +7,9 @@ securityContext:
 
 {{- define "helm.containerSecurityContext " -}}
 securityContext:
-  runAsUser: 1000
-  runAsGroup: 3000
   privileged: false
-  runAsNonRoot: true
-  readOnlyRootFilesystem: true
+  runAsNonRoot: false
+  readOnlyRootFilesystem: false
   allowPrivilegeEscalation: false
   {{/*
   */}}

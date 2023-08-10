@@ -5,9 +5,9 @@ targetCloud: "IBM"
 config:
   existingSecret:
   git:
-    address: "UNCONFIGURED"
-    branch: "UNCONFIGURED"
-    path: "/tmp/git"
+    address: 
+    branch: 
+    path:
   insecure:
     brokerPassword:
     brokerUsername:
