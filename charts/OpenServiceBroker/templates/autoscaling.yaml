@@ -8,7 +8,7 @@ spec:
  maxReplicas: {{ default "5" .Values.deployment.autoscaling.maxReplicas }}
  minReplicas: {{ default "1" .Values.deployment.autoscaling.minReplicas }}
  scaleTargetRef:
-   apiVersion: extensions/v1beta1
+   apiVersion: apps/v1
    kind: Deployment
    name: {{ include "helm.fullname" . }}
  targetCPUUtilizationPercentage: {{ default "90" .Values.deployment.autoscaling.targetCPUUtilizationPercentage }}
