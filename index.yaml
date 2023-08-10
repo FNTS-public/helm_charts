@@ -144,6 +144,15 @@ entries:
   awx:
   - apiVersion: v2
     appVersion: latest
+    created: "2023-08-10T23:04:10.86140118Z"
+    description: Deploy AWX as a helm chart
+    digest: 25cc8303d7b64c59ff0c413530424858859ce05ef877de6eb8255515770a20cf
+    name: awx
+    urls:
+    - https://github.com/FNTS-public/helm_charts/releases/download/awx-0.0.9/awx-0.0.9.tgz
+    version: 0.0.9
+  - apiVersion: v2
+    appVersion: latest
     created: "2023-08-10T22:59:36.637253286Z"
     description: Deploy AWX as a helm chart
     digest: 2e30d9574064a301e2f040271d199c18a638269bdf269dec234099ea701c2ea0
@@ -405,4 +414,4 @@ entries:
     urls:
     - https://github.com/FNTS-public/helm_charts/releases/download/pa11y-dashboard-0.0.1/pa11y-dashboard-0.0.1.tgz
     version: 0.0.1
-generated: "2023-08-10T22:59:36.637430787Z"
+generated: "2023-08-10T23:04:10.861545186Z"
