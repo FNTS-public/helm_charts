@@ -112,7 +112,7 @@ spec:
               readOnly: true
               subPath: SECRET_KEY
             - mountPath: /etc/tower/settings.py
-              name: {{ .Values.awx.settings.existingSecret | default "awx-settings" }}
+              name: {{ .Values.awx.settings.existingConfigMap | default "awx-settings" }}
               readOnly: true
               subPath: settings.py
             - mountPath: /etc/nginx/nginx.conf
@@ -178,7 +178,7 @@ spec:
               readOnly: true
               subPath: SECRET_KEY
             - mountPath: /etc/tower/settings.py
-              name: {{ .Values.awx.settings.existingSecret | default "awx-settings" }}
+              name: {{ .Values.awx.settings.existingConfigMap | default "awx-settings" }}
               readOnly: true
               subPath: settings.py
             - mountPath: /var/run/redis

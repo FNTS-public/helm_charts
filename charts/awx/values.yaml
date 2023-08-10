@@ -23,7 +23,7 @@ awx:
   secretKey:
     existingSecret:
   settings:
-    existingSecret:
+    existingConfigMap:
   nginxConfig:
     existingConfigMap:
   receptorConfig:
