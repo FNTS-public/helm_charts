@@ -96,27 +96,27 @@ spec:
           terminationMessagePolicy: File
           volumeMounts:
             - mountPath: /etc/tower/conf.d/execution_environments.py
-              name: {{ .Values.awx.appCredentials.existingSecret | default "awx-application-credentials" }}
+              name: awx-app-credentials
               readOnly: true
               subPath: execution_environments.py
             - mountPath: /etc/tower/conf.d/credentials.py
-              name: {{ .Values.awx.appCredentials.existingSecret | default "awx-application-credentials" }}
+              name: awx-app-credentials
               readOnly: true
               subPath: credentials.py
             - mountPath: /etc/tower/conf.d/ldap.py
-              name: {{ .Values.awx.appCredentials.existingSecret | default "awx-application-credentials" }}
+              name: awx-app-credentials
               readOnly: true
               subPath: ldap.py
             - mountPath: /etc/tower/SECRET_KEY
-              name: {{ .Values.awx.secretKey.existingSecret | default "awx-secret-key" }}
+              name: awx-secret-key
               readOnly: true
               subPath: SECRET_KEY
             - mountPath: /etc/tower/settings.py
-              name: {{ .Values.awx.settings.existingConfigMap | default "awx-settings" }}
+              name: awx-settings
               readOnly: true
               subPath: settings.py
             - mountPath: /etc/nginx/nginx.conf
-              name: {{ .Values.awx.nginxConfig.existingConfigMap | default "awx-nginx-conf" }}
+              name: awx-settings
               readOnly: true
               subPath: nginx.conf
             - mountPath: /var/run/redis
@@ -162,23 +162,23 @@ spec:
           terminationMessagePolicy: File
           volumeMounts:
             - mountPath: /etc/tower/conf.d/execution_environments.py
-              name: {{ .Values.awx.appCredentials.existingSecret | default "awx-application-credentials" }}
+              name: awx-app-credentials
               readOnly: true
               subPath: execution_environments.py
             - mountPath: /etc/tower/conf.d/credentials.py
-              name: {{ .Values.awx.appCredentials.existingSecret | default "awx-application-credentials" }}
+              name: awx-app-credentials
               readOnly: true
               subPath: credentials.py
             - mountPath: /etc/tower/conf.d/ldap.py
-              name: {{ .Values.awx.appCredentials.existingSecret | default "awx-application-credentials" }}
+              name: awx-app-credentials
               readOnly: true
               subPath: ldap.py
             - mountPath: /etc/tower/SECRET_KEY
-              name: {{ .Values.awx.secretKey.existingSecret | default "awx-secret-key" }}
+              name: awx-secret-key
               readOnly: true
               subPath: SECRET_KEY
             - mountPath: /etc/tower/settings.py
-              name: {{ .Values.awx.settings.existingConfigMap | default "awx-settings" }}
+              name: awx-settings
               readOnly: true
               subPath: settings.py
             - mountPath: /var/run/redis
@@ -190,7 +190,7 @@ spec:
             - mountPath: /var/lib/awx/rsyslog
               name: rsyslog-dir
             - mountPath: /etc/receptor/receptor.conf
-              name: {{ .Values.awx.receptorConfig.existingConfigMap | default "awx-receptor-config" }}
+              name: awx-receptor-config
               readOnly: true
               subPath: receptor.conf
             - mountPath: /var/run/receptor
@@ -212,8 +212,7 @@ spec:
           terminationMessagePolicy: File
           volumeMounts:
             - mountPath: /etc/receptor/receptor.conf
-#              name: awx-receptor-config
-              name: {{ .Values.awx.receptorConfig.existingConfigMap | default "awx-receptor-config" }}
+              name: awx-receptor-config
               readOnly: true
               subPath: receptor.conf
             - mountPath: /var/run/receptor
@@ -232,7 +231,7 @@ spec:
       serviceAccountName: awx
       terminationGracePeriodSeconds: 30
       volumes:
-        - name: awx-application-credentials
+        - name: awx-app-credentials
           secret:
             defaultMode: 420
             items:
@@ -242,27 +241,27 @@ spec:
                 path: ldap.py
               - key: execution_environments.py
                 path: execution_environments.py
-            secretName: awx-app-credentials
+            secretName: {{ .Values.awx.appCredentials.existingSecret | default "awx-application-credentials" }}
         - name: awx-secret-key
           secret:
             defaultMode: 420
             items:
               - key: secret_key
                 path: SECRET_KEY
-            secretName: awx-secret-key
+            secretName: {{ .Values.awx.secretKey.existingSecret | default "awx-secret-key" }}
         - configMap:
             defaultMode: 420
             items:
               - key: settings
                 path: settings.py
-            name: awx-awx-configmap
+            name: {{ .Values.awx.settings.existingConfigMap | default "awx-settings" }}
           name: awx-settings
         - configMap:
             defaultMode: 420
             items:
               - key: nginx_conf
                 path: nginx.conf
-            name: awx-awx-configmap
+            name: {{ .Values.awx.settings.existingConfigMap | default "awx-settings" }}
           name: awx-nginx-conf
         - configMap:
             defaultMode: 420
@@ -288,7 +287,7 @@ spec:
             items:
               - key: receptor_conf
                 path: receptor.conf
-            name: awx-awx-configmap
+            name: {{ .Values.awx.receptorConfig.existingConfigMap | default "awx-receptor-config" }}
           name: awx-receptor-config
         - emptyDir: {}
           name: awx-projects
