@@ -1,0 +1,70 @@
+{{- $fullName := include "helm.fullname" . }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: {{ $fullName }}
+  namespace: {{ .Values.namespaceOverride | default "default" }}
+  labels:
+    {{ include "helm.labels.standard" . | indent 4 | trim }}
+    {{ include "helm.labels.custom" . | indent 4 | trim }}
+  {{- if .Values.deployment.annotations }}
+  annotations:
+    {{- range $key, $value := .Values.deployment.annotations }}
+    {{ $key }}: {{ $value | quote }}
+    {{- end }}
+  {{- end }}
+rules:
+  - verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - patch
+      - delete
+    apiGroups:
+      - ''
+    resources:
+      - pods
+  - verbs:
+      - get
+    apiGroups:
+      - ''
+    resources:
+      - pods/log
+  - verbs:
+      - create
+    apiGroups:
+      - ''
+    resources:
+      - pods/attach
+  - verbs:
+      - get
+      - create
+      - delete
+    apiGroups:
+      - ''
+    resources:
+      - secrets
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{ $fullName }}
+  namespace: {{ .Values.namespaceOverride | default "default" }}
+  labels:
+    {{ include "helm.labels.standard" . | indent 4 | trim }}
+    {{ include "helm.labels.custom" . | indent 4 | trim }}
+  {{- if .Values.deployment.annotations }}
+  annotations:
+    {{- range $key, $value := .Values.deployment.annotations }}
+    {{ $key }}: {{ $value | quote }}
+    {{- end }}
+  {{- end }}
+subjects:
+  - kind: ServiceAccount
+    name: {{ $fullName }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: {{ $fullName }}

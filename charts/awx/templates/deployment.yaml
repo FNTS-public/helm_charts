@@ -15,7 +15,7 @@ metadata:
   {{- end }}
 spec:
   progressDeadlineSeconds: 600
-  {{- if not .Values.scaling }}
+  {{- if not .Values.deployment.autoscale.enabled }}
   replicas: {{ if and (not (kindIs "invalid" .Values.deployment.replicas)) (default "0" .Values.deployment.replicas | toString) }}{{ .Values.deployment.replicas }}{{ else }}{{ 1 }}{{ end }}
   {{- end }}
   selector:
@@ -29,12 +29,12 @@ spec:
   template:
     metadata:
       annotations:
-        {{- range $key, $value := .Values.podAnnotations }}
+        {{- range $key, $value := .Values.pod.annotations }}
         {{ $key }}: {{ $value | quote }}
         {{- end }}
       labels:
         {{ include "helm.labels.standard" . | indent 8 | trim }}
-        {{- range $key, $value := .Values.podLabels }}
+        {{- range $key, $value := .Values.pod.labels }}
         {{ $key }}: {{ $value | quote }}
         {{- end }}
     spec:
@@ -96,19 +96,19 @@ spec:
           terminationMessagePolicy: File
           volumeMounts:
             - mountPath: /etc/tower/conf.d/execution_environments.py
-              name: {{ .Values.awx.application-credentials.existingSecret | default "awx-application-credentials" }}
+              name: {{ .Values.awx.appCredentials.existingSecret | default "awx-application-credentials" }}
               readOnly: true
               subPath: execution_environments.py
             - mountPath: /etc/tower/conf.d/credentials.py
-              name: {{ .Values.awx.application-credentials.existingSecret | default "awx-application-credentials" }}
+              name: {{ .Values.awx.appCredentials.existingSecret | default "awx-application-credentials" }}
               readOnly: true
               subPath: credentials.py
             - mountPath: /etc/tower/conf.d/ldap.py
-              name: {{ .Values.awx.application-credentials.existingSecret | default "awx-application-credentials" }}
+              name: {{ .Values.awx.appCredentials.existingSecret | default "awx-application-credentials" }}
               readOnly: true
               subPath: ldap.py
             - mountPath: /etc/tower/SECRET_KEY
-              name: {{ .Values.awx.secret-key.existingSecret | default "awx-secret-key" }}
+              name: {{ .Values.awx.secretKey.existingSecret | default "awx-secret-key" }}
               readOnly: true
               subPath: SECRET_KEY
             - mountPath: /etc/tower/settings.py
@@ -116,7 +116,7 @@ spec:
               readOnly: true
               subPath: settings.py
             - mountPath: /etc/nginx/nginx.conf
-              name: {{ .Values.awx.nginx-config.existingConfigMap | default "awx-nginx-conf" }}
+              name: {{ .Values.awx.nginxConfig.existingConfigMap | default "awx-nginx-conf" }}
               readOnly: true
               subPath: nginx.conf
             - mountPath: /var/run/redis
@@ -162,19 +162,19 @@ spec:
           terminationMessagePolicy: File
           volumeMounts:
             - mountPath: /etc/tower/conf.d/execution_environments.py
-              name: {{ .Values.awx.application-credentials.existingSecret | default "awx-application-credentials" }}
+              name: {{ .Values.awx.appCredentials.existingSecret | default "awx-application-credentials" }}
               readOnly: true
               subPath: execution_environments.py
             - mountPath: /etc/tower/conf.d/credentials.py
-              name: {{ .Values.awx.application-credentials.existingSecret | default "awx-application-credentials" }}
+              name: {{ .Values.awx.appCredentials.existingSecret | default "awx-application-credentials" }}
               readOnly: true
               subPath: credentials.py
             - mountPath: /etc/tower/conf.d/ldap.py
-              name: {{ .Values.awx.application-credentials.existingSecret | default "awx-application-credentials" }}
+              name: {{ .Values.awx.appCredentials.existingSecret | default "awx-application-credentials" }}
               readOnly: true
               subPath: ldap.py
             - mountPath: /etc/tower/SECRET_KEY
-              name: {{ .Values.awx.secret-key.existingSecret | default "awx-secret-key" }}
+              name: {{ .Values.awx.secretKey.existingSecret | default "awx-secret-key" }}
               readOnly: true
               subPath: SECRET_KEY
             - mountPath: /etc/tower/settings.py
@@ -191,7 +191,7 @@ spec:
               name: rsyslog-dir
             - mountPath: /etc/receptor/receptor.conf
 #              name: awx-receptor-config
-              name: { .Values.awx.receptor-config.existingSecret | default "awx-receptor-config" }}
+              name: {{ .Values.awx.receptorConfig.existingSecret | default "awx-receptor-config" }}
               readOnly: true
               subPath: receptor.conf
             - mountPath: /var/run/receptor
@@ -214,7 +214,7 @@ spec:
           volumeMounts:
             - mountPath: /etc/receptor/receptor.conf
 #              name: awx-receptor-config
-              name: { .Values.awx.receptor-config.existingSecret | default "awx-receptor-config" }}
+              name: {{ .Values.awx.receptorConfig.existingSecret | default "awx-receptor-config" }}
               readOnly: true
               subPath: receptor.conf
             - mountPath: /var/run/receptor

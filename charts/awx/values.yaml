@@ -1,0 +1,34 @@
+fullnameOverride:
+namespaceOverride:
+
+deployment:
+  annotations: {}
+  labels: {}
+  autoscale:
+    enabled: true
+  replicas:
+
+pod:
+  annotations: {}
+  labels: {}
+
+image:
+  repository:
+  tag:
+  pullPolicy:
+
+awx:
+  appCredentials:
+    existingSecret:
+  secretKey:
+    existingSecret:
+  settings:
+    existingSecret:
+  nginxConfig:
+    existingConfigMap:
+  receptorConfig:
+    existingSecret:
+  
+
+  
+
