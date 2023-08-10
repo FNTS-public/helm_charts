@@ -11,7 +11,7 @@ securityContext:
   runAsGroup: 3000
   privileged: false
   runAsNonRoot: true
-  readOnlyRootFilesystem: true
+  readOnlyRootFilesystem: false
   allowPrivilegeEscalation: false
   {{/*
   */}}
