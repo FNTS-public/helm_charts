@@ -43,7 +43,7 @@ spec:
               value: {{ .Values.config.git.address | default "UNCONFIGURED" }}
             - name: GIT_REMOTE_BRANCH
               value: {{ .Values.config.git.branch | default "UNCONFIGURED" }}
-            - name: GIT_REMOTE_BRANCH
+            - name: GIT_REMOTE_PATH
               value: {{ .Values.config.git.path | default "/tmp/git" }}
 
           envFrom:
