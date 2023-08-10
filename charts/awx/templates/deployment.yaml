@@ -73,7 +73,7 @@ spec:
             - mountPath: /data
               name: awx-redis-data
         - args:
-            - /usr/bin/launch_awx.sh
+            - /usr/bin/launch_awx_web.sh
           env:
             - name: MY_POD_NAMESPACE
               valueFrom:
@@ -151,8 +151,8 @@ spec:
                 fieldRef:
                   apiVersion: v1
                   fieldPath: metadata.namespace
-          image: 'quay.io/ansible/awx:21.5.0'
-          imagePullPolicy: IfNotPresent
+          image: "{{ .Values.image.repository | default "quay.io/ansible/awx" }}:{{ .Values.image.tag | default "21.5.0" }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy | default "IfNotPresent" }}
           name: awx-task
           resources:
             requests:
