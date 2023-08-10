@@ -268,7 +268,7 @@ spec:
             items:
               - key: redis_conf
                 path: redis.conf
-            name: {{ .Values.awx.receptorConfig.existingConfigMap | default "awx-awx-configmap" }}
+            name: {{ .Values.awx.redisConfig.existingConfigMap | default "awx-awx-configmap" }}
           name: awx-redis-config
         - emptyDir: {}
           name: awx-redis-socket
@@ -282,12 +282,14 @@ spec:
           name: receptor-socket
         - emptyDir: {}
           name: rsyslog-dir
-        - configMap:
-            defaultMode: 420
-            items:
-              - key: receptor_conf
-                path: receptor.conf
-            name: {{ .Values.awx.receptorConfig.existingConfigMap | default "awx-awx-configmap" }}
+        # - configMap:
+        #     defaultMode: 420
+        #     items:
+        #       - key: receptor_conf
+        #         path: receptor.conf
+        #     name: {{ .Values.awx.receptorConfig.existingConfigMap | default "awx-awx-configmap" }}
+        #   name: awx-receptor-config
+        - emptyDir: {}
           name: awx-receptor-config
         - emptyDir: {}
           name: awx-projects

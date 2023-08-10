@@ -28,6 +28,8 @@ awx:
     existingConfigMap:
   receptorConfig:
     existingConfigMap:
+  redisConfig:
+    existingConfigMap:
   
 
   
