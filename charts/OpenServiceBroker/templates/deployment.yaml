@@ -36,7 +36,7 @@ spec:
       containers:
         - name: service-broker
           {{ include "helm.containerSecurityContext " $ | indent 10 | trim }}
-          image: "{{ .Values.image.repository | default "ghcr.io/meshcloud/unipipe-service-broker" }}:{{ .Values.image.tag | default "v1.7.6" }}"
+          image: "{{ .Values.image.repository | default "ghcr.io/fnts-public/openservicebroker" }}:{{ .Values.image.tag | default "latest" }}"
           imagePullPolicy: {{ .Values.image.pullPolicy | default "IfNotPresent" }}
           env:
             - name: GIT_REMOTE
