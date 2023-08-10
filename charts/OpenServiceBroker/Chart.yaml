@@ -2,4 +2,4 @@ apiVersion: v2
 appVersion: "latest"
 description: Deploy a simple OpenServiceBroker based on unpipe-service-broker (https://github.com/meshcloud/unipipe-service-broker)
 name: OpenServiceBroker
-version: 0.0.12
+version: 0.0.13
