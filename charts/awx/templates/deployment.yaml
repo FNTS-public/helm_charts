@@ -254,14 +254,14 @@ spec:
             items:
               - key: settings
                 path: settings.py
-            name: {{ .Values.awx.settings.existingConfigMap | default "awx-settings" }}
+            name: {{ .Values.awx.settings.existingConfigMap | default "awx-awx-configmap" }}
           name: awx-settings
         - configMap:
             defaultMode: 420
             items:
               - key: nginx_conf
                 path: nginx.conf
-            name: {{ .Values.awx.settings.existingConfigMap | default "awx-settings" }}
+            name: {{ .Values.awx.settings.existingConfigMap | default "awx-awx-configmap" }}
           name: awx-nginx-conf
         - configMap:
             defaultMode: 420
