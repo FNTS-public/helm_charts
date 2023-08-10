@@ -54,6 +54,8 @@ spec:
               mountPath: {{ .Values.config.path | default "/tmp/git" }}
             - name: tmp
               mountPath: /tmp
+            - name: app
+              mountPath: /app
           ports:
             - name: http
               containerPort: 80
@@ -63,4 +65,6 @@ spec:
         - name: gitpath
           emptyDir: {}
         - name: tmp
+          emptyDir: {}
+        - name: app
           emptyDir: {}
