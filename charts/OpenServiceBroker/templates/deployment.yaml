@@ -22,6 +22,7 @@ spec:
   selector:
     matchLabels:
       {{ include "helm.labels.selector" . | indent 6 | trim }}
+      {{ include "helm.labels.standard" . | indent 8 | trim }}
   template:
     metadata:
       annotations:
@@ -29,6 +30,7 @@ spec:
         {{ $key }}: {{ $value | quote }}
         {{- end }}
       labels:
+        {{ include "helm.labels.selector" . | indent 8 | trim }}
         {{ include "helm.labels.standard" . | indent 8 | trim }}
         {{- range $key, $value := .Values.podLabels }}
         {{ $key }}: {{ $value | quote }}
@@ -56,7 +58,7 @@ spec:
               mountPath: {{ .Values.config.path | default "/tmp/git" }}
           ports:
             - name: http
-              containerPort: 8080
+              containerPort: 80
               protocol: TCP
           {{ include "helm.resources" . | indent 10 | trim }}
       volumes:

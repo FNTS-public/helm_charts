@@ -19,9 +19,10 @@ spec:
   type: ClusterIP
   ports:
     - port: 8080
-      targetPort: http
+      targetPort: 80
       protocol: TCP
       name: http
     
   selector:
     {{ include "helm.labels.selector" . | indent 4 | trim }}
+    {{ include "helm.labels.standard" . | indent 4 | trim }}
