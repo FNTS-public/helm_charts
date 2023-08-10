@@ -1,0 +1,5 @@
+apiVersion: v2
+appVersion: "latest"
+description: Deploy AWX as a helm chart
+name: awx
+version: 0.0.0

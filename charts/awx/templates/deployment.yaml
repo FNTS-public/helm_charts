@@ -1,0 +1,295 @@
+{{- $fullName := include "helm.fullname" . }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ $fullName }}
+  namespace: {{ .Values.namespaceOverride | default "default" }}
+  labels:
+    {{ include "helm.labels.standard" . | indent 4 | trim }}
+    {{ include "helm.labels.custom" . | indent 4 | trim }}
+  {{- if .Values.deployment.annotations }}
+  annotations:
+    {{- range $key, $value := .Values.deployment.annotations }}
+    {{ $key }}: {{ $value | quote }}
+    {{- end }}
+  {{- end }}
+spec:
+  progressDeadlineSeconds: 600
+  {{- if not .Values.scaling }}
+  replicas: {{ if and (not (kindIs "invalid" .Values.deployment.replicas)) (default "0" .Values.deployment.replicas | toString) }}{{ .Values.deployment.replicas }}{{ else }}{{ 1 }}{{ end }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{ include "helm.labels.selector" . | indent 6 | trim }}
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      annotations:
+        {{- range $key, $value := .Values.podAnnotations }}
+        {{ $key }}: {{ $value | quote }}
+        {{- end }}
+      labels:
+        {{ include "helm.labels.standard" . | indent 8 | trim }}
+        {{- range $key, $value := .Values.podLabels }}
+        {{ $key }}: {{ $value | quote }}
+        {{- end }}
+    spec:
+      tolerations:
+      - key: "node.kubernetes.io/unreachable"
+        operator: "Exists"
+        effect: "NoExecute"
+        tolerationSeconds: 30
+      - key: "node.kubernetes.io/not-ready"
+        operator: "Exists"
+        effect: "NoExecute"
+        tolerationSeconds: 30
+      - key: "kubernetes.azure.com/scalesetpriority"
+        operator: "Exists"
+        effect: "NoSchedule"
+      containers:
+        - args:
+            - redis-server
+            - /etc/redis.conf
+          image: 'docker.io/redis:7'
+          imagePullPolicy: IfNotPresent
+          name: redis
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+            - mountPath: /etc/redis.conf
+              name: awx-redis-config
+              readOnly: true
+              subPath: redis.conf
+            - mountPath: /var/run/redis
+              name: awx-redis-socket
+            - mountPath: /data
+              name: awx-redis-data
+        - args:
+            - /usr/bin/launch_awx.sh
+          env:
+            - name: MY_POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.namespace
+            - name: UWSGI_MOUNT_PATH
+              value: /
+          image: "{{ .Values.image.repository | default "quay.io/ansible/awx" }}:{{ .Values.image.tag | default "21.5.0" }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy | default "IfNotPresent" }}
+          name: awx-web
+          ports:
+            - containerPort: 8052
+              protocol: TCP
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+            - mountPath: /etc/tower/conf.d/execution_environments.py
+              name: {{ .Values.awx.application-credentials.existingSecret | default "awx-application-credentials" }}
+              readOnly: true
+              subPath: execution_environments.py
+            - mountPath: /etc/tower/conf.d/credentials.py
+              name: {{ .Values.awx.application-credentials.existingSecret | default "awx-application-credentials" }}
+              readOnly: true
+              subPath: credentials.py
+            - mountPath: /etc/tower/conf.d/ldap.py
+              name: {{ .Values.awx.application-credentials.existingSecret | default "awx-application-credentials" }}
+              readOnly: true
+              subPath: ldap.py
+            - mountPath: /etc/tower/SECRET_KEY
+              name: {{ .Values.awx.secret-key.existingSecret | default "awx-secret-key" }}
+              readOnly: true
+              subPath: SECRET_KEY
+            - mountPath: /etc/tower/settings.py
+              name: {{ .Values.awx.settings.existingSecret | default "awx-settings" }}
+              readOnly: true
+              subPath: settings.py
+            - mountPath: /etc/nginx/nginx.conf
+              name: {{ .Values.awx.nginx-config.existingConfigMap | default "awx-nginx-conf" }}
+              readOnly: true
+              subPath: nginx.conf
+            - mountPath: /var/run/redis
+              name: awx-redis-socket
+            - mountPath: /var/run/supervisor
+              name: supervisor-socket
+            - mountPath: /var/run/awx-rsyslog
+              name: rsyslog-socket
+            - mountPath: /var/lib/awx/rsyslog
+              name: rsyslog-dir
+            - mountPath: /var/lib/awx/projects
+              name: awx-projects
+        - args:
+            - /usr/bin/launch_awx_task.sh
+          env:
+            - name: SUPERVISOR_WEB_CONFIG_PATH
+              value: /etc/supervisord.conf
+            - name: AWX_SKIP_MIGRATIONS
+              value: '1'
+            - name: MY_POD_UID
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.uid
+            - name: MY_POD_IP
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: status.podIP
+            - name: MY_POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.namespace
+          image: 'quay.io/ansible/awx:21.5.0'
+          imagePullPolicy: IfNotPresent
+          name: awx-task
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+            - mountPath: /etc/tower/conf.d/execution_environments.py
+              name: {{ .Values.awx.application-credentials.existingSecret | default "awx-application-credentials" }}
+              readOnly: true
+              subPath: execution_environments.py
+            - mountPath: /etc/tower/conf.d/credentials.py
+              name: {{ .Values.awx.application-credentials.existingSecret | default "awx-application-credentials" }}
+              readOnly: true
+              subPath: credentials.py
+            - mountPath: /etc/tower/conf.d/ldap.py
+              name: {{ .Values.awx.application-credentials.existingSecret | default "awx-application-credentials" }}
+              readOnly: true
+              subPath: ldap.py
+            - mountPath: /etc/tower/SECRET_KEY
+              name: {{ .Values.awx.secret-key.existingSecret | default "awx-secret-key" }}
+              readOnly: true
+              subPath: SECRET_KEY
+            - mountPath: /etc/tower/settings.py
+              name: {{ .Values.awx.settings.existingSecret | default "awx-settings" }}
+              readOnly: true
+              subPath: settings.py
+            - mountPath: /var/run/redis
+              name: awx-redis-socket
+            - mountPath: /var/run/supervisor
+              name: supervisor-socket
+            - mountPath: /var/run/awx-rsyslog
+              name: rsyslog-socket
+            - mountPath: /var/lib/awx/rsyslog
+              name: rsyslog-dir
+            - mountPath: /etc/receptor/receptor.conf
+#              name: awx-receptor-config
+              name: { .Values.awx.receptor-config.existingSecret | default "awx-receptor-config" }}
+              readOnly: true
+              subPath: receptor.conf
+            - mountPath: /var/run/receptor
+              name: receptor-socket
+            - mountPath: /var/lib/awx/projects
+              name: awx-projects
+        - args:
+            - receptor
+            - '--config'
+            - /etc/receptor/receptor.conf
+          image: 'quay.io/ansible/awx-ee:latest'
+          imagePullPolicy: IfNotPresent
+          name: awx-ee
+          resources:
+            requests:
+              cpu: 100m
+              memory: 64Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+            - mountPath: /etc/receptor/receptor.conf
+#              name: awx-receptor-config
+              name: { .Values.awx.receptor-config.existingSecret | default "awx-receptor-config" }}
+              readOnly: true
+              subPath: receptor.conf
+            - mountPath: /var/run/receptor
+              name: receptor-socket
+            - mountPath: /var/lib/awx/projects
+              name: awx-projects
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext:
+        fsGroup: 0
+        fsGroupChangePolicy: OnRootMismatch
+        runAsGroup: 0
+        runAsUser: 0
+      serviceAccount: awx
+      serviceAccountName: awx
+      terminationGracePeriodSeconds: 30
+      volumes:
+        - name: awx-application-credentials
+          secret:
+            defaultMode: 420
+            items:
+              - key: credentials.py
+                path: credentials.py
+              - key: ldap.py
+                path: ldap.py
+              - key: execution_environments.py
+                path: execution_environments.py
+            secretName: awx-app-credentials
+        - name: awx-secret-key
+          secret:
+            defaultMode: 420
+            items:
+              - key: secret_key
+                path: SECRET_KEY
+            secretName: awx-secret-key
+        - configMap:
+            defaultMode: 420
+            items:
+              - key: settings
+                path: settings.py
+            name: awx-awx-configmap
+          name: awx-settings
+        - configMap:
+            defaultMode: 420
+            items:
+              - key: nginx_conf
+                path: nginx.conf
+            name: awx-awx-configmap
+          name: awx-nginx-conf
+        - configMap:
+            defaultMode: 420
+            items:
+              - key: redis_conf
+                path: redis.conf
+            name: awx-awx-configmap
+          name: awx-redis-config
+        - emptyDir: {}
+          name: awx-redis-socket
+        - emptyDir: {}
+          name: awx-redis-data
+        - emptyDir: {}
+          name: supervisor-socket
+        - emptyDir: {}
+          name: rsyslog-socket
+        - emptyDir: {}
+          name: receptor-socket
+        - emptyDir: {}
+          name: rsyslog-dir
+        - configMap:
+            defaultMode: 420
+            items:
+              - key: receptor_conf
+                path: receptor.conf
+            name: awx-awx-configmap
+          name: awx-receptor-config
+        - emptyDir: {}
+          name: awx-projects
