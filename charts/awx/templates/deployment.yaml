@@ -191,7 +191,7 @@ spec:
               name: rsyslog-dir
             - mountPath: /etc/receptor/receptor.conf
 #              name: awx-receptor-config
-              name: {{ .Values.awx.receptorConfig.existingSecret | default "awx-receptor-config" }}
+              name: {{ .Values.receptorConfig.existingConfigMap | default "awx-receptor-config" }}
               readOnly: true
               subPath: receptor.conf
             - mountPath: /var/run/receptor
@@ -214,7 +214,7 @@ spec:
           volumeMounts:
             - mountPath: /etc/receptor/receptor.conf
 #              name: awx-receptor-config
-              name: {{ .Values.awx.receptorConfig.existingSecret | default "awx-receptor-config" }}
+              name: {{ .Values.receptorConfig.existingConfigMap | default "awx-receptor-config" }}
               readOnly: true
               subPath: receptor.conf
             - mountPath: /var/run/receptor
