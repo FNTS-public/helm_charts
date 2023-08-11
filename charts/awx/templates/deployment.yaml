@@ -191,7 +191,6 @@ spec:
               name: rsyslog-dir
             - mountPath: /etc/receptor
               name: awx-receptor-config
-              readOnly: true
             - mountPath: /var/run/receptor
               name: receptor-socket
             - mountPath: /var/lib/awx/projects
