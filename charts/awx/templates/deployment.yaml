@@ -209,10 +209,8 @@ spec:
           terminationMessagePath: /dev/termination-log
           terminationMessagePolicy: File
           volumeMounts:
-            - mountPath: /etc/receptor/receptor.conf
+            - mountPath: /etc/receptor
               name: awx-receptor-config
-              readOnly: true
-              subPath: receptor.conf
             - mountPath: /var/run/receptor
               name: receptor-socket
             - mountPath: /var/lib/awx/projects
