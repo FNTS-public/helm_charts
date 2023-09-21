@@ -45,7 +45,8 @@ spec:
               value: {{ .Values.config.git.branch | default "UNCONFIGURED" }}
             - name: GIT_REMOTE_PATH
               value: {{ .Values.config.git.path | default "/tmp/git" }}
-
+            - name: DEBUG_MODE
+              value: {{ .Values.debug }}
           envFrom:
             - secretRef:
                 name: {{ .Values.existingSecret | default $fullName }}

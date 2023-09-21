@@ -42,3 +42,5 @@ image:
   repository: "ghcr.io/fnts-public/openservicebroker"
   tag: "latest"
   pullPolicy: "IfNotPresent"
+
+debug: "true"
