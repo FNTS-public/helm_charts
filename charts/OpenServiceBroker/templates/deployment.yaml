@@ -50,13 +50,6 @@ spec:
           envFrom:
             - secretRef:
                 name: {{ .Values.existingSecret | default $fullName }}
-          resources:
-            limits:
-              cpu: '2'
-              memory: 3Gi
-            requests:
-              cpu: 50m
-              memory: 512Mi
           volumeMounts:
             - name: gitpath
               mountPath: {{ .Values.config.path | default "/tmp/git" }}

@@ -4,11 +4,11 @@
 {{- define "helm.resources" -}}
 resources:
   requests:
-    cpu: 50m
-    memory: {{ dig "resources" "requests" "memory" "64Mi" (default .Values.deployment .Values.statefulset) }}
+    cpu: 1000m
+    memory: {{ dig "resources" "requests" "memory" "512Mi" (default .Values.deployment .Values.statefulset) }}
   limits:
-    cpu: {{ dig "resources" "limits" "cpu" "1000m" (default .Values.deployment .Values.statefulset) }}
-    memory: {{ dig "resources" "limits" "memory" "256Mi" (default .Values.deployment .Values.statefulset) }}
+    cpu: {{ dig "resources" "limits" "cpu" "2000m" (default .Values.deployment .Values.statefulset) }}
+    memory: {{ dig "resources" "limits" "memory" "5Gi" (default .Values.deployment .Values.statefulset) }}
 {{- end -}}
 
 {{- define "helm.password" -}}
