@@ -32,10 +32,10 @@ spec:
         {{ $key }}: {{ $value | quote }}
         {{- end }}
     spec:
-      {{ if .Values.deployment.security.pod.enabled -}}{{ include "helm.podSecurityContext " . | indent 6 | trim }}{{ end }}
+      {{- if .Values.deployment.security.pod.enabled -}}{{ include "helm.podSecurityContext " . | indent 6 | trim }}{{ end }}
       containers:
         - name: service-broker
-          {{ if .Values.deployment.security.container.enabled -}}{{ include "helm.containerSecurityContext " $ | indent 10 | trim }}{{ end }}
+          {{- if .Values.deployment.security.container.enabled -}}{{ include "helm.containerSecurityContext " $ | indent 10 | trim }}{{ end }}
           image: "{{ .Values.image.repository | default "ghcr.io/fnts-public/openservicebroker" }}:{{ .Values.image.tag | default "latest" }}"
           imagePullPolicy: {{ .Values.image.pullPolicy | default "IfNotPresent" }}
           env:
@@ -46,7 +46,7 @@ spec:
             - name: GIT_REMOTE_PATH
               value: {{ .Values.config.git.path | default "/tmp/git" }}
             - name: DEBUG_MODE
-              value: {{ .Values.debug }}
+              value: {{ .Values.debug | quote }}
           envFrom:
             - secretRef:
                 name: {{ .Values.existingSecret | default $fullName }}
